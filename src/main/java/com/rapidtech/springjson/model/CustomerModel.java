@@ -29,8 +29,8 @@ public class CustomerModel {
 
     private String placeOfBirth;
 
-    private List<AddressModel> address = new ArrayList<>();
-    private List<SchoolModel> schools = new ArrayList<>();
+    private List<AddressModel> address;
+    private List<SchoolModel> schools;
 
     public CustomerModel(CustomerEntity entity) {
         BeanUtils.copyProperties(entity, this);

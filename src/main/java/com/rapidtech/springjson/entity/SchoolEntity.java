@@ -1,5 +1,6 @@
 package com.rapidtech.springjson.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rapidtech.springjson.model.SchoolModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,12 +30,13 @@ public class SchoolEntity {
     @Column(name = "level", length = 100, nullable = false)
     private String level;
 
-    @Column(name = "customer_id", nullable = false)
+    @Column(name = "customer_id", insertable = false, updatable = false)
     private Long customerId;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
-    private SchoolEntity school_join;
+    @JoinColumn(name = "customer_id", nullable = false)
+    private CustomerEntity customer;
 
     public SchoolEntity(SchoolModel entity) {
         BeanUtils.copyProperties(entity, this);

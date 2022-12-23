@@ -1,5 +1,6 @@
 package com.rapidtech.springjson.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.rapidtech.springjson.model.AddressModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,6 +23,14 @@ public class AddressEntity {
 //    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "customer_id", insertable = false, updatable = false)
+    private Long customerId;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private CustomerEntity customer;
+
     @Column(name = "address_name", length = 100, nullable = false)
     private String name;
     @Column(name = "address", length = 100, nullable = false)
@@ -35,14 +44,8 @@ public class AddressEntity {
     @Column(name = "province", length = 100, nullable = false)
     private String province;
 
-    @Column(name = "customer_id", nullable = false)
-    private Long customerId;
-
-    @ManyToOne
-    @JoinColumn(name = "customer_id", insertable = false, updatable = false)
-    private AddressEntity address_join;
-
-    public AddressEntity(AddressModel entity) {
-        BeanUtils.copyProperties(entity, this);
+    public AddressEntity(AddressModel model) {
+        BeanUtils.copyProperties(model, this);
     }
+
 }

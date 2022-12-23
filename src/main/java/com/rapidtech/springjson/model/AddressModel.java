@@ -18,16 +18,6 @@ public class AddressModel {
     private String city;
     private String province;
 
-    public AddressModel(Long id, String name, String address, String village, String district, String city, String province) {
-        this.id = id;
-        this.name = name;
-        this.address = address;
-        this.village = village;
-        this.district = district;
-        this.city = city;
-        this.province = province;
-    }
-
     public AddressModel(AddressEntity entity) {
         BeanUtils.copyProperties(entity, this);
     }

@@ -1,7 +1,7 @@
 package com.rapidtech.springjson.service.impl;
 
 import com.rapidtech.springjson.entity.CustomerEntity;
-import com.rapidtech.springjson.model.CustomerModel;
+import com.rapidtech.springjson.model.*;
 import com.rapidtech.springjson.repository.CustomerRepo;
 import com.rapidtech.springjson.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -44,6 +45,15 @@ public class CustomerServiceImpl implements CustomerService {
             return Optional.empty();
         }
         CustomerEntity entity = new CustomerEntity(model);
+
+        if(!model.getAddress().isEmpty()){
+            entity.addAddressList(model.getAddress());
+        }
+
+        if(!model.getSchools().isEmpty()){
+            entity.addSchoolList(model.getSchools());
+        }
+
         try {
             this.repo.save(entity);
             return Optional.of(new CustomerModel(entity));
@@ -51,7 +61,10 @@ public class CustomerServiceImpl implements CustomerService {
             log.error("Customer save is failed, error: {}", e.getMessage());
             return Optional.empty();
         }
+
     }
+
+
 
     @Override
     public Optional<CustomerModel> update(Long id, CustomerModel model) {
@@ -93,5 +106,32 @@ public class CustomerServiceImpl implements CustomerService {
             log.error("Customer delete is failed, error: {}", e.getMessage());
             return Optional.empty();
         }
+    }
+
+    @Override
+    public Optional<CustomerResponseModel> saveAll(CustomerRequestModel request) {
+        if(request.getCustomers().isEmpty()) {
+            return Optional.of(new CustomerResponseModel());
+        }
+        CustomerResponseModel response = new CustomerResponseModel();
+        int countSuccess = 0;
+        int countFailed = 0;
+
+        List<CustomerModel> customerModels = new ArrayList<>();
+        for (CustomerModel model: request.getCustomers()){
+            Optional<CustomerModel> customerModel  = this.save(model);
+            if(customerModel.isPresent()){
+                customerModels.add(model);
+                countSuccess++;
+            }else {
+                countFailed++;
+            }
+        }
+
+        response.setData(customerModels);
+        response.setSuccessSave(countSuccess);
+        response.setFailedSave(countFailed);
+        return Optional.of(response);
+
     }
 }
